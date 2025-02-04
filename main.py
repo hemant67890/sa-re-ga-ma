@@ -28,7 +28,10 @@ from urllib.parse import urlparse, parse_qs
 from bs4 import BeautifulSoup
 import datetime
 import aiohttp
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 bot = Client("bot",
              bot_token= "7063024370:AAFHuTYE6bOwjI5s3Nodv2mi8JGctq15nu0", 
              #bot_token= os.environ.get("BOT_TOKEN"),
@@ -98,17 +101,18 @@ Busy = InlineKeyboardMarkup(
 )
 
 
-@bot.on_message(filters.command(["logs"]) )
-async def send_logs(bot: Client, m: Message):
-    try:
-        
-        # Assuming `assist.txt` is located in the current directory
-         with open("Assist.txt", "rb") as file:
-            sent= await m.reply_text("**📤 Sending you ....**")
-            await m.reply_document(document=file)
-            await sent.delete(True)
-    except Exception as e:
-        await m.reply_text(f"Error sending logs: {e}")
+def add_logging_to_handlers():
+    @bot.on_message(filters.command(["logs"]))
+    async def send_logs(bot: Client, m: Message):
+        try:
+            with open("Assist.txt", "rb") as file:
+                sent = await m.reply_text("**📤 Sending you ....**")
+                await m.reply_document(document=file)
+                await sent.delete(True)
+            logging.info(f"Sent logs to user: {m.from_user.id}")
+        except Exception as e:
+            await m.reply_text(f"Error sending logs: {e}")
+            logging.error(f"Error sending logs: {e}")
 
 
 # List of image URLs
@@ -125,49 +129,46 @@ image_urls = [
 
 
 @bot.on_message(filters.command(["start"]))
-async def start_command(bot: Client, message: Message):
-    # Choose a random image URL from the list
-    random_image_url = random.choice(image_urls)
-    
-    
-    # Caption for the image
-    caption = f"**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫  👋!\n\n➠ 𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 ♥️\n➠ Can Extract Videos & Pdf Form Your Text File and Upload to Telegram\n\n➠ 𝐔𝐬𝐞 /drm 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐓𝐨 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐅𝐫𝐨𝐦 𝐓𝐗𝐓 𝐅𝐢𝐥𝐞  \n\n➠𝐌𝐚𝐝𝐞 𝐁𝐲: @ITS_NOT_ROMEO **\n"
-    
-    # Send the image with the caption
-    await bot.send_photo(
-        chat_id=message.chat.id,
-        photo=random_image_url,
-        caption=caption,
-        reply_markup=keyboard
-    )
+    async def start_command(bot: Client, message: Message):
+        random_image_url = random.choice(image_urls)
+        caption = f"**𝐇𝐞𝐥𝐥𝐨 𝐃𝐞𝐚𝐫  👋!\n\n➠ 𝐈 𝐚𝐦 𝐚 𝐓𝐞𝐱𝐭 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫 𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐖𝐢𝐭𝐡 𝐋𝐨𝐯𝐞❣️**"
+        await bot.send_photo(
+            chat_id=message.chat.id,
+            photo=random_image_url,
+            caption=caption,
+            reply_markup=keyboard
+        )
+        logging.info(f"Processed /start command from user: {message.from_user.id}")
 
 @bot.on_message(filters.command('h2t'))
-async def run_bot(bot: Client, m: Message):
-    user_id = m.from_user.id
-    if user_id not in auth_users:
-        await m.reply_text("**HEY BUDDY THIS IS ONLY FOR MY ADMINS TO USE THIS CONATCH MY DEV : @ITS_NOT_ROMEO  **")
-    else:
-        editable = await m.reply_text(" Send Your HTML file\n")
-        input: Message = await bot.listen(editable.chat.id)
-        html_file = await input.download()
-        await input.delete(True)
-        await editable.delete()
-        with open(html_file, 'r') as f:
-            soup = BeautifulSoup(f, 'html.parser')
-            tables = soup.find_all('table')
-            videos = []
-            for table in tables:
-                rows = table.find_all('tr')
-                for row in rows:
-                    cols = row.find_all('td')
-                    name = cols[0].get_text().strip()
-                    link = cols[1].find('a')['href']
-                    videos.append(f'{name}:{link}')
-        txt_file = os.path.splitext(html_file)[0] + '.txt'
-        with open(txt_file, 'w') as f:
-            f.write('\n'.join(videos))
-        await m.reply_document(document=txt_file,caption="Here is your txt file.")
-        os.remove(txt_file)
+    async def run_bot(bot: Client, m: Message):
+        user_id = m.from_user.id
+        if user_id not in auth_users:
+            await m.reply_text("**HEY BUDDY THIS IS ONLY FOR MY ADMINS TO USE THIS CONATCH MY DEV : @ITS_NOT_ROMEO  **")
+            logging.warning(f"Unauthorized access attempt by user: {user_id}")
+        else:
+            editable = await m.reply_text(" Send Your HTML file\n")
+            input: Message = await bot.listen(editable.chat.id)
+            html_file = await input.download()
+            await input.delete(True)
+            await editable.delete()
+            with open(html_file, 'r') as f:
+                soup = BeautifulSoup(f, 'html.parser')
+                tables = soup.find_all('table')
+                videos = []
+                for table in tables:
+                    rows = table.find_all('tr')
+                    for row in rows:
+                        cols = row.find_all('td')
+                        name = cols[0].get_text().strip()
+                        link = cols[1].find('a')['href']
+                        videos.append(f'{name}:{link}')
+            txt_file = os.path.splitext(html_file)[0] + '.txt'
+            with open(txt_file, 'w') as f:
+                f.write('\n'.join(videos))
+            await m.reply_document(document=txt_file, caption="Here is your txt file.")
+            os.remove(txt_file)
+            logging.info(f"Processed /h2t command from user: {user_id}")
 
 
 
@@ -185,59 +186,60 @@ def is_subscription_expired(user_id):
 
 # Define the myplan command handler
 @bot.on_message(filters.command("myplan"))
-async def myplan_command_handler(bot, message):
-    user_id = message.from_user.id
-    with open("Subscription_data.txt", "r") as file:
-        for line in file:
-            data = line.strip().split(", ")
-            if int(data[0]) == user_id:
-                subscription_start = data[1]
-                expiration_date = data[2]
-                today = datetime.datetime.today()
-                if today > datetime.datetime.strptime(expiration_date, "%d-%m-%Y"):
-                    plan = "EXPIRED "
-                    response_text = f"**✨ User ID: {user_id}\n📊 PLAN STAT : {plan}\n\n🔰 Activated on : {subscription_start}\n🧨 Expiration Date: {expiration_date} \n\n 🫰🏼 ACTIVATE YOUR PLAN NOW ! \n⚡️ TO ACTIVATE MESSAGE : @ITS_NOT_ROMEO :D **"
-                else:
-                    plan = "ALIVE!"  
-                    response_text = f"**✨ User ID: {user_id}\n📊 PLAN STAT : {plan}\n🔰 Activated on : {subscription_start}\n🧨 Expiration Date: {expiration_date}**"
-                await message.reply(response_text)
-                return
-    if user_id in auth_users:
-        await message.reply("YOU HAVE LIFE TIME ACCESS :) ")
-    else:
-        await message.reply("No subscription data found for you.")
+    async def myplan_command_handler(bot, message):
+        user_id = message.from_user.id
+        with open("Subscription_data.txt", "r") as file:
+            for line in file:
+                data = line.strip().split(", ")
+                if int(data[0]) == user_id:
+                    subscription_start = data[1]
+                    expiration_date = data[2]
+                    today = datetime.datetime.today()
+                    if today > datetime.datetime.strptime(expiration_date, "%d-%m-%Y"):
+                        plan = "EXPIRED "
+                        response_text = f"**✨ User ID: {user_id}\n📊 PLAN STAT : {plan}\n\n🔰 Activated on : {subscription_start}\n🧨 Expiration Date: {expiration_date}**"
+                    else:
+                        plan = "ALIVE!"  
+                        response_text = f"**✨ User ID: {user_id}\n📊 PLAN STAT : {plan}\n🔰 Activated on : {subscription_start}\n🧨 Expiration Date: {expiration_date}**"
+                    await message.reply(response_text)
+                    logging.info(f"Processed /myplan command from user: {user_id}")
+                    return
+        if user_id in auth_users:
+            await message.reply("YOU HAVE LIFE TIME ACCESS :) ")
+            logging.info(f"User {user_id} has lifetime access.")
+        else:
+            await message.reply("No subscription data found for you.")
+            logging.warning(f"No subscription data found for user: {user_id}")
 
 
 @bot.on_message(filters.command("stop"))
-async def restart_handler(_, m):
-    
+    async def stop_handler(_, m):
+        global processing_request
         if failed_links:
-         error_file_send = await m.reply_text("**📤 Sending you Failed Downloads List Before Stoping   **")
-         with open("failed_downloads.txt", "w") as f:
-          for link in failed_links:
-            f.write(link + "\n")
-    # After writing to the file, send it
-         await m.reply_document(document="failed_downloads.txt", caption=fail_cap)
-         await error_file_send.delete()
-         os.remove(f'failed_downloads.txt')
-         failed_links.clear()
-         processing_request = False  # Reset the processing flag
-         #await m.reply_text("**Note This Is BETA Stage May have Bugs  **")
-         await m.reply_text("🚦**STOPPED**🚦", True)
-         os.execl(sys.executable, sys.executable, *sys.argv)
-        else:
-         processing_request = False  # Reset the processing flag
-         #await m.reply_text("**Note This Is BETA Stage May have Bugs  **")
-         await m.reply_text("🚦**STOPPED**🚦", True)
-         os.execl(sys.executable, sys.executable, *sys.argv)
+            error_file_send = await m.reply_text("**📤 Sending you Failed Downloads List Before Stopping **")
+            with open("failed_downloads.txt", "w") as f:
+                for link in failed_links:
+                    f.write(link + "\n")
+            await m.reply_document(document="failed_downloads.txt", caption=fail_cap)
+            await error_file_send.delete()
+            os.remove('failed_downloads.txt')
+            failed_links.clear()
+        processing_request = False
+        await m.reply_text("🚦**STOPPED**🚦", True)
+        os.execl(sys.executable, sys.executable, *sys.argv)
+        logging.info(f"Bot stopped by user: {m.from_user.id}")
    
 
 @bot.on_message(filters.command("restart"))
-async def restart_handler(_, m):
-   
-     processing_request = False  # Reset the processing flag
-     await m.reply_text("🤖**Restarting Bot **🤖", True)
-     os.execl(sys.executable, sys.executable, *sys.argv)
+    async def restart_handler(_, m):
+        global processing_request
+        processing_request = False
+        await m.reply_text("🤖**Restarting Bot **🤖", True)
+        os.execl(sys.executable, sys.executable, *sys.argv)
+        logging.info(f"Bot restarted by user: {m.from_user.id}")
+
+# Call the function to add logging to handlers
+add_logging_to_handlers()
     
 
 @bot.on_message(filters.command(["drm"]))
