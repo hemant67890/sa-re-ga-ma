@@ -1,10 +1,6 @@
-
 {
-
     "name": "Unkniwntxt",
-
     "description": "Download videos from various websites using this telegram bot",
-
     "repository": "https://github.com/devansh-op/txt-v2",
     "buildpacks":[
         {
@@ -18,48 +14,41 @@
         }
     ],
     "keywords": [
-
-       
-
         "telegram bot",
-
         "pyrogram"
-
     ],
-
     "env": {
-
         "BOT_TOKEN": {
-
-            "description": "Your Bot token from @Botfather"
-
+            "description": "Your Bot token from @Botfather",
+            "value": "7594440755:AAHtdnGt9YWGfp4RKynABmAdhoKEGI1ViH8"
         },
-
         "API_ID": {
-
-            "description": "Your API_ID from https://my.telegram.org/apps"
-
+            "description": "Your API_ID from https://my.telegram.org/apps",
+            "value": "29554659"
         },
-
         "API_HASH": {
-
-            "description": "Your API_HASH from https://my.telegram.org/apps"
-
-        }
-
-    },
-
-    "buildpacks": [
-
-        {
-
-            "url": "heroku/python"
-
+            "description": "Your API_HASH from https://my.telegram.org/apps",
+            "value": "7257d3b3192355ae71ada27cfdc3837c"
         },
-       {
+        "OWNER": {
+            "description": "Owner ID",
+            "value": "7521176146"
+        },
+        "ADMINS": {
+            "description": "Admins ID",
+            "value": "7521176146"
+        },
+        "PASS_DB": {
+            "description": "Password for DB",
+            "value": "721"
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        },
+        {
             "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
-       }
-       
+        }
     ]
-
 }
