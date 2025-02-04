@@ -32,19 +32,19 @@ import aiohttp
 logging.info("Starting bot initialization.")
 
 bot = Client("bot",
-             bot_token= "7063024370:AAFHuTYE6bOwjI5s3Nodv2mi8JGctq15nu0", 
+             bot_token="7594440755:AAHtdnGt9YWGfp4RKynABmAdhoKEGI1ViH8", 
              #bot_token= os.environ.get("BOT_TOKEN"),
-             api_id= 27862677,
-             api_hash= "e343ce2c81b2b6c2c0d6bee58284e3bd")
+             api_id=29554659,
+             api_hash="7257d3b3192355ae71ada27cfdc3837c")
 logging.info("Bot client created.")
 
-auth_users = [5881684718,6200710535,5753557653,6404553499]
-#romeo  -1923922961 
-
-owner_id = 5881684718
+# Replace auth_users with the new admin(s)
+auth_users = [7521176146]
+#OWNER and admin
+owner_id = 7521176146
 # Extras 
 failed_links = []  # List to store failed links
-fail_cap =f"**➜ This file Contain Failed Downloads while Downloding \n You Can Retry them one more time **"
+fail_cap = f"**➜ This file Contain Failed Downloads while Downloding \n You Can Retry them one more time **"
 
 # counter 
 global videocount, pdfcount  # Declare videocount and pdfcount as global variables
@@ -106,7 +106,7 @@ logging.info("Keyboards initialized.")
 async def send_logs(bot: Client, m: Message):
     logging.info(f"Received /logs command from user {m.from_user.id}.")
     try:
-        # Assuming `assist.txt` is located in the current directory
+        # Assuming `Assist.txt` is located in the current directory
          with open("Assist.txt", "rb") as file:
             sent = await m.reply_text("**📤 Sending you ....**")
             logging.info("Sending Assist.txt file.")
@@ -471,7 +471,7 @@ async def account_login(bot: Client, m: Message):
                             logging.info("Downloaded file from drive.")
                             copy = await bot.send_document(chat_id=m.chat.id, document=ka, caption=cc1)
                             await copy.copy(chat_id = -1002097681261)
-                            count+=1
+                            count += 1
                             os.remove(ka)
                             time.sleep(1)
                         except FloodWait as e: 
