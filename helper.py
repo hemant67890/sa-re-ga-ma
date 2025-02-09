@@ -18,9 +18,8 @@ import threading
 import httpx
 import re
 
-
 # pw_token = os.environ.get("token")
-pw_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2MTU2NTIuMTU2LCJkYXRhIjp7Il9pZCI6IjYyYjE0NDYxMTkzMDJhMDAxOGY2ZGE5YSIsInVzZXJuYW1lIjoiOTE3MTU4MTkzOCIsImZpcnN0TmFtZSI6IkFudWogQmhhcmdhdiIsImxhc3ROYW1lIjoiQmhhcmdhdiIsIm9yZ2FuaXphdGlvbiI6eyJfaWQiOiI1ZWIzOTNlZTk1ZmFiNzQ2OGE3OWQxODkiLCJ3ZWJzaXRlIjoicGh5c2ljc3dhbGxhaC5jb20iLCJuYW1lIjoiUGh5c2ljc3dhbGxhaCJ9LCJlbWFpbCI6InRlY2htb25vZmZpY2lhbEBnbWFpbC5jb20iLCJyb2xlcyI6WyI1YjI3YmQ5NjU4NDJmOTUwYTc3OGM2ZWYiXSwiY291bnRyeUdyb3VwIjoiSU4iLCJ0eXBlIjoiVVNFUiJ9LCJpYXQiOjE3MzkwMTA4NTJ9.S_L5ZddoUYeBwVY2ndGXVQ_NAnfF-ojqElN2zVTDtX4"
+pw_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3Mzk2MTU2NTIuMTU2LCJkYXRhIjp7Il9pZCI6IjYyYjE0NDYxMTkzMDJhMDAxOGY2ZGE5YSIsInVzZXJuYW1lIjoiOTE3MTU4MTkzOCIsImZpcnN0TmFtZSI6IkFudWogQmhhcmd...
 
 def duration(filename):
     result = subprocess.run([
@@ -31,7 +30,6 @@ def duration(filename):
                             stderr=subprocess.STDOUT)
     return float(result.stdout)
 
-
 async def download(url, name):
     ka = f'{name}.pdf'
     async with aiohttp.ClientSession() as session:
@@ -41,8 +39,6 @@ async def download(url, name):
                 await f.write(await resp.read())
                 await f.close()
     return ka
-
-
 
 async def run(cmd):
     proc = await asyncio.create_subprocess_shell(
@@ -58,7 +54,6 @@ async def run(cmd):
     if stderr:
         return f'[stderr]\n{stderr.decode()}'
 
-
 def old_download(url, file_name, chunk_size=1024 * 10):
     if os.path.exists(file_name):
         os.remove(file_name)
@@ -69,7 +64,6 @@ def old_download(url, file_name, chunk_size=1024 * 10):
                 fd.write(chunk)
     return file_name
 
-
 def human_readable_size(size, decimal_places=2):
     for unit in ['B', 'KB', 'MB', 'GB', 'TB', 'PB']:
         if size < 1024.0 or unit == 'PB':
@@ -77,17 +71,16 @@ def human_readable_size(size, decimal_places=2):
         size /= 1024.0
     return f"{size:.{decimal_places}f} {unit}"
 
-
 def time_name():
     date = datetime.date.today()
     now = datetime.datetime.now()
     current_time = now.strftime("%H%M%S")
     return f"{date} {current_time}.mp4"
 
-
 async def download_video(url, cmd, name):
     time.sleep(2)
-    download_cmd = f'{cmd} -R infinite --fragment-retries 25 --socket-timeout 50 --external-downloader aria2c --downloader-args "aria2c: -x 16 -j 32" --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"'
+    download_cmd = f'{cmd} -R infinite --fragment-retries 25 --socket-timeout 50 --external-downloader aria2c --downloader-args "aria2c: -x 16 -j 32" --user-agent "Mozilla/5.0 (Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0; Windows NT 10.0...
+
     global failed_counter
     print(download_cmd)
     logging.info(download_cmd)
@@ -114,10 +107,6 @@ async def download_video(url, cmd, name):
     except FileNotFoundError as exc:
         return os.path.isfile.splitext[0] + "." + "mp4"
 
-
-
-
-
 async def get_pssh_kid(mpd_url: str, headers: dict = {}, cookies: dict = {}):
     """
     Get pssh, kid from mpd url
@@ -143,7 +132,6 @@ async def get_pssh_kid(mpd_url: str, headers: dict = {}, cookies: dict = {}):
         else:
             break
     return pssh, kid
-
 
 class Penpencil:
     otp_url = "https://api.penpencil.xyz/v1/videos/get-otp?key="
@@ -232,9 +220,6 @@ class Penpencil:
             print("PSSH:", pssh)
             print("KID:", kid)
 
-            # keys = await cls.get_keys(kid)
-            # print("Keys:", keys)
-
             key = await cls.get_keys(kid)
             print("Key:", key)
         return mpd_url, key
@@ -244,39 +229,35 @@ async def get_drm_keys(url: str):
     return key
 
 async def drm_download_video(url, qual, name, keys):
-
     print(keys)
+    if isinstance(keys, list):
+        keys = ":".join(keys)
     keys = keys.split(":")
     if len(keys) != 2:
         print("Error: Two keys must be provided separated by a colon.")
         return None
     key1, key2 = keys
 
+    if qual == "1":
+        nqual = "720"
+    elif qual == "2":
+        nqual = "480"
+    elif qual == "3":
+        nqual = "360"
+    elif qual == "4":
+        nqual = "240"
+    else:
+        nqual = "480"
 
-    if qual =="1":
-        nqual="720"
-
-    elif qual=="2":
-        nqual= "480" 
-
-    elif qual =="3":
-        nqual="360"
-
-    elif qual=="4":
-        nqual="240"
-    else :
-        nqual="480"                
-  
     try:
         # Get the directory of the current script
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Path to N_m3u8DL-RE
+        # Path to N_m3u8DL-RE
         n_m3u8dl_re_path = os.path.join(current_dir, "N_m3u8DL-RE.exe")
 
-
         # Use N_m3u8DL-RE for decryption
-        nurl = url.replace("master",f"master_{nqual}")
+        nurl = url.replace("master", f"master_{nqual}")
         subprocess.run([n_m3u8dl_re_path, "--auto-select", "--key", f"{key1}:{key2}", nurl, "-mt", "-M", "format=mp4", "--save-name", name], check=True)
 
         # Verify download
@@ -290,12 +271,9 @@ async def drm_download_video(url, qual, name, keys):
 
     except FileNotFoundError as exc:
         print(f"File not found: {exc}")
-        return os.path.splitext(name)[0] + ".mp4", None
+        return os.path.splitext(name)[0] + ".mp4"
 
-   
-
-    
-async def send_vid(bot: Client, m: Message, cc, filename, thumb, name,thumb2):
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, thumb2):
     reply = await m.reply_text(f"**⚡️ Starting Uploading ...** - `{name}`")
     try:
         if thumb != "no":
