@@ -31,7 +31,7 @@ import datetime
 import aiohttp
 
 bot = Client("bot",
-             bot_token= "7705076607:AAHPwB2ifTJg2DCPynWRYvleA3IAaKwthwA", 
+             bot_token= "", 
              #bot_token= os.environ.get("BOT_TOKEN"),
              api_id= 27862677,
              api_hash= "e343ce2c81b2b6c2c0d6bee58284e3bd")
